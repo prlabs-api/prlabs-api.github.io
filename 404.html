@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PR LABS API</title>
+    <style>
+        /* Basic styling for the loading spinner */
+        #loading {
+            display: none;
+            border: 4px solid #f3f3f3; /* Light gray */
+            border-top: 4px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin-top: 10px;
+        }
+
+        /* Animation for the loading spinner */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    <script>
+        // Function to automatically extract ID and perform the required steps
+        async function fetchAndRedirect() {
+            // Show the loading spinner
+            document.getElementById("loading").style.display = "block";
+
+            try {
+                // Extract the ID from the current URL (htkld in this case)
+                const currentUrl = window.location.href;
+                const urlParts = currentUrl.split('/');  // Split the URL to extract the last part
+                const id = urlParts[urlParts.length - 1];  // Get the ID (last part)
+                console.log('Extracted ID:', id);
+                // Fetch the URL using the extracted ID
+                const apiResponse = await fetch(`https://prlabs-api.github.io/${id}`);
+
+                // Check if the fetch was successful
+                if (!apiResponse.ok) {
+                    throw new Error('Failed to fetch URL');
+                }
+
+                // Parse the response JSON to get the URL to redirect to
+                const data = await apiResponse.json();
+                const postUrl = data.url; // The API returns an object like { "url": "example.com" }
+
+                // Make a POST request to the received URL
+                const postResponse = await fetch(postUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ id: id }), // Send the ID or any data needed
+                });
+
+                // Check if the POST request was successful
+                if (!postResponse.ok) {
+                    throw new Error('Failed to make POST request');
+                }
+
+                // Redirect to the URL received from the API response
+                window.location.href = postUrl;
+
+            } catch (error) {
+                console.error('Error:', error);
+            } finally {
+                // Hide the loading spinner after the request is done
+                document.getElementById("loading").style.display = "none";
+            }
+        }
+
+        // Run the function when the page is loaded
+        window.onload = fetchAndRedirect;
+    </script>
+</head>
+<body>
+    <h1>Redirecting...</h1>
+    
+    <!-- Loading Spinner -->
+    <div id="loading"></div>
+
+    <p>Please wait, you will be redirected shortly...</p>
+</body>
+</html>

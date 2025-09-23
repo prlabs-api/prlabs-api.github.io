@@ -48,19 +48,7 @@
                 const postUrl = data.url; // The API returns an object like { "url": "example.com" }
 
                 // Make a POST request to the received URL
-                const postResponse = await fetch(postUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ id: id }), // Send the ID or any data needed
-                });
-
-                // Check if the POST request was successful
-                if (!postResponse.ok) {
-                    throw new Error('Failed to make POST request');
-                }
-
+                
                 // Redirect to the URL received from the API response
                 window.location.href = postUrl;
 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fetch & Redirect Example</title>
+    <title>PR LABS API</title>
     <style>
         /* Basic styling for the loading spinner */
         #loading {
@@ -24,25 +24,30 @@
         }
     </style>
     <script>
-        // Function to fetch the URL and perform the POST request
+        // Function to automatically extract ID and perform the required steps
         async function fetchAndRedirect() {
             // Show the loading spinner
             document.getElementById("loading").style.display = "block";
 
             try {
-                // Fetch the URL by appending the ID from the input field
-                const id = document.getElementById("idInput").value;
-                const response = await fetch(`https://api.example.com/url/${id}`);
+                // Extract the ID from the current URL (htkld in this case)
+                const currentUrl = window.location.href;
+                const urlParts = currentUrl.split('/');  // Split the URL to extract the last part
+                const id = urlParts[urlParts.length - 1];  // Get the ID (last part)
+                console.log('Extracted ID:', id);
+                // Fetch the URL using the extracted ID
+                const apiResponse = await fetch(`https://prlabs-api.github.io/${id}`);
 
-                // Check if the request was successful
-                if (!response.ok) {
+                // Check if the fetch was successful
+                if (!apiResponse.ok) {
                     throw new Error('Failed to fetch URL');
                 }
 
-                const data = await response.json();
-                const postUrl = data.url; // Assuming the API returns a URL in the response
+                // Parse the response JSON to get the URL to redirect to
+                const data = await apiResponse.json();
+                const postUrl = data.url; // The API returns an object like { "url": "example.com" }
 
-                // Make the POST request to the fetched URL
+                // Make a POST request to the received URL
                 const postResponse = await fetch(postUrl, {
                     method: 'POST',
                     headers: {
@@ -66,16 +71,17 @@
                 document.getElementById("loading").style.display = "none";
             }
         }
+
+        // Run the function when the page is loaded
+        window.onload = fetchAndRedirect;
     </script>
 </head>
 <body>
-    <h1>Fetch and Redirect Example</h1>
-
-    <label for="idInput">Enter ID: </label>
-    <input type="text" id="idInput" placeholder="Enter ID">
-    <button onclick="fetchAndRedirect()">Submit</button>
-
+    <h1>Redirecting...</h1>
+    
     <!-- Loading Spinner -->
     <div id="loading"></div>
+
+    <p>Please wait, you will be redirected shortly...</p>
 </body>
 </html>

@@ -36,7 +36,7 @@
                 const id = urlParts[urlParts.length - 1];  // Get the ID (last part)
                 console.log('Extracted ID:', id);
                 // Fetch the URL using the extracted ID
-                const apiResponse = await fetch(`https://prlabs-api.github.io/${id}`);
+                const apiResponse = await fetch(`https://api1.prlabsapi.com/redirect_get?id=${id}`);
 
                 // Check if the fetch was successful
                 if (!apiResponse.ok) {
